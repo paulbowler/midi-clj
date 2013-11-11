@@ -33,6 +33,9 @@ the usage of midi devices and the midi system from within Clojure.
     ; And the same thing with a sequence of notes
     (midi-play phat-synth [40 47 40] [80 50 110] [250 500 250])
 
+    ; And the same thing with a sequence of chords
+    (midi-play phat-synth [[62 65 69 72][67 71 74 77][60 64 67]] [80 90 110] [750 500 1000])
+
 In Ubuntu Linux I use the snd-virmidi kernel module to provide software midi
 ports.  USB midi devices should be pretty much plug and play.
 

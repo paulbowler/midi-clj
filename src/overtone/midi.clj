@@ -15,7 +15,8 @@
                   DefaultListModel ListSelectionModel)
      (java.awt.event MouseAdapter)
      (java.util.concurrent FutureTask ScheduledThreadPoolExecutor TimeUnit))
-  (:use clojure.set)
+  (:use [clojure.set]
+        [clojure.core.incubator])
   (:require [overtone.at-at :as at-at]))
 
 ; Java MIDI returns -1 when a port can support any number of transmitters or
@@ -356,7 +357,7 @@
     (doall (map #(midi-note out % velocity duration channel) notes))))
 
 (defn midi-play
-  "Play a seq of notes with the corresponding velocities and durations."
+  "Play a seq of notes/chords with the corresponding velocities and durations."
   ([out notes velocities durations]
      (midi-play out notes velocities durations 0))
   ([out notes velocities durations channel]
@@ -368,6 +369,6 @@
          (let [n (first notes)
                v (first velocities)
                d (first durations)
-               f (if (seq? n) midi-chord midi-note)]
+               f (if (seqable? n) midi-chord midi-note)]
            (at-at/after cur-time #(f out n v d channel) midi-player-pool)
            (recur (next notes) (next velocities) (next durations) (+ cur-time d)))))))
