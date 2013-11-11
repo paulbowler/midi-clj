@@ -348,9 +348,15 @@
      (midi-note-on sink note-num vel channel)
      (at-at/after dur #(midi-note-off sink note-num channel) midi-player-pool)))
 
+(defn midi-chord
+  "Play a seq of notes with the corresponding velocities and durations as a chord."
+  ([out notes velocities durations]
+     (midi-chord out notes velocities durations 0))
+  ([out notes velocity duration channel]
+    (doall (map #(midi-note out % velocity duration channel) notes))))
+
 (defn midi-play
-  "Play a seq of notes with the corresponding velocities and
-  durations."
+  "Play a seq of notes with the corresponding velocities and durations."
   ([out notes velocities durations]
      (midi-play out notes velocities durations 0))
   ([out notes velocities durations channel]
@@ -361,6 +367,7 @@
        (if notes
          (let [n (first notes)
                v (first velocities)
-               d (first durations)]
-           (at-at/after cur-time #(midi-note out n v d channel) midi-player-pool)
+               d (first durations)
+               f (if (seq? n) midi-chord midi-note)]
+           (at-at/after cur-time #(f out n v d channel) midi-player-pool)
            (recur (next notes) (next velocities) (next durations) (+ cur-time d)))))))
