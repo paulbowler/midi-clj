@@ -66,3 +66,4 @@ http://groups.google.com/group/overtone
 ### Authors
 
 * Jeff Rose
+* Paul Bowler
