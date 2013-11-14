@@ -372,3 +372,19 @@
                f (if (seqable? n) midi-chord midi-note)]
            (at-at/after cur-time #(f out n v d channel) midi-player-pool)
            (recur (next notes) (next velocities) (next durations) (+ cur-time d)))))))
+
+(defn midi-play-song
+  "Play a seq of notes/chords with the corresponding velocities and durations."
+  ([out chords]
+     (midi-play-song out chords 0))
+  ([out chords channel]
+     (loop [chords chords
+            cur-time  0]
+       (if chords
+         (let [c (first chords)
+               n (:notes c)
+               v 80
+               d (:duration c)
+               f (if (seqable? n) midi-chord midi-note)]
+           (at-at/after cur-time #(f out n v d channel) midi-player-pool)
+           (recur (next chords) (+ cur-time d)))))))
